@@ -21,7 +21,8 @@ model Session {
 }
 
 model User {
-  id        String @id
-  username  String
-  full_name String @map("fullName")
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  fullName String
+  password String
 }

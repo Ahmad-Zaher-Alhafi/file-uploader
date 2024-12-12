@@ -6,6 +6,12 @@
     <title>Upload</title>
   </head>
   <body>
-    <h1>Show upload stuff here</h1>
+    <a href="/logout">Logout</a>
+
+    <% if (locals.user) { %>
+    <h1>Welcome <%- user.fullName %></h1>
+    <% } %>
+
+    <div>Show upload stuff here</div>
   </body>
 </html>

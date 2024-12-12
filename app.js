@@ -10,6 +10,8 @@ const { PrismaClient } = require("@prisma/client");
 const path = require("node:path");
 const userRouter = require("./routes/userRouter");
 
+const userController = require("./controllers/userController");
+
 const app = express();
 
 app.set("views", path.join(__dirname, "views"));
@@ -18,11 +20,7 @@ app.set("view engine", "ejs");
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const { rows } = await pool.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username]
-      );
-      const user = rows[0];
+      const user = await userController.getUserByUsername(username);
 
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
@@ -43,10 +41,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-      id,
-    ]);
-    const user = rows[0];
+    const user = await userController.getUserById(id);
 
     done(null, user);
   } catch (err) {
@@ -59,7 +54,7 @@ app.use(
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // ms
     },
-    secret: "a santa at nasa",
+    secret: "a santa at sasa",
     resave: true,
     saveUninitialized: true,
     store: new PrismaSessionStore(new PrismaClient(), {
